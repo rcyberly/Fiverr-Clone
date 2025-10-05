@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Fiverr Clone</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .profile-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Fiverr Clone</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/gigs">Gigs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/messages">Messages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my-gigs">My Gigs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/create-gigs">Post a Gig</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logoutBtn">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="profile-container">
+            <h2 class="text-center mb-4">User Profile</h2>
+            <div id="profile-info">
+                <p><strong>Username:</strong> <span id="username"></span></p>
+                <p><strong>Email:</strong> <span id="email"></span></p>
+                <p><strong>Account Type:</strong> <span id="accountType"></span></p>
+            </div>
+            <div id="message" class="mt-3 alert d-none" role="alert"></div>
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const usernameSpan = document.getElementById('username');
+            const emailSpan = document.getElementById('email');
+            const accountTypeSpan = document.getElementById('accountType');
+            const messageDiv = document.getElementById('message');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                window.location.href = '/';
+            });
+            try {
+                const response = await fetch('/api/auth/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    const user = await response.json();
+                    usernameSpan.textContent = user.username;
+                    emailSpan.textContent = user.email;
+                    accountTypeSpan.textContent = user.isFreelancer ? 'Freelancer' : 'Client';
+                } else {
+                    const error = await response.json();
+                    messageDiv.classList.remove('d-none');
+                    messageDiv.classList.add('alert-danger');
+                    messageDiv.textContent = error.msg || 'Failed to fetch profile data.';
+                }
+            } catch (err) {
+                console.error(err);
+                messageDiv.classList.remove('d-none');
+                messageDiv.classList.add('alert-danger');
+                messageDiv.textContent = 'An error occurred while fetching profile data.';
+            }
+        });
+    </script>
+</body>
+</html>
+

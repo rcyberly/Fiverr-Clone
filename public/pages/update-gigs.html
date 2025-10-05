@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Gig | Fiverr Clone</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .form-control:focus {
+            border-color: #1DBF73;
+            box-shadow: 0 0 0 0.25rem rgba(29, 191, 115, 0.25);
+        }
+        .btn-fiverr {
+            background-color: #1DBF73;
+            border-color: #1DBF73;
+            color: white;
+            font-weight: 600;
+        }
+        .btn-fiverr:hover {
+            background-color: #1a9c67;
+            border-color: #1a9c67;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Fiverr Clone</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/gigs">Gigs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/messages">Messages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <h2 class="text-center mb-4">Update a Gig</h2>
+            <form id="updateGigForm">
+                <div class="mb-3">
+                    <label for="gigId" class="form-label">Gig ID (from URL)</label>
+                    <input type="text" class="form-control" id="gigId" required readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Gig Title</label>
+                    <input type="text" class="form-control" id="title" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" rows="4" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price ($)</label>
+                    <input type="number" class="form-control" id="price" required>
+                </div>
+                <div class="mb-3">
+                    <label for="skills" class="form-label">Skills (comma-separated)</label>
+                    <input type="text" class="form-control" id="skills" required>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-fiverr">Update Gig</button>
+                    <button type="button" class="btn btn-danger" id="deleteGigBtn">Delete Gig</button>
+                </div>
+            </form>
+            <div id="message" class="mt-3 alert d-none" role="alert"></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const gigId = new URLSearchParams(window.location.search).get('id');
+            const token = localStorage.getItem('token');
+            const messageDiv = document.getElementById('message');
+
+            if (!token) {
+                // Redirect if no token is found
+                window.location.href = '/login';
+                return;
+            }
+
+            if (!gigId) {
+                messageDiv.classList.remove('d-none');
+                messageDiv.classList.add('alert-danger');
+                messageDiv.textContent = 'Gig ID is missing from the URL. Cannot update gig.';
+                return;
+            }
+
+            document.getElementById('gigId').value = gigId;
+
+            // Fetch gig data and populate the form
+            try {
+                const response = await fetch(`/api/gigs/${gigId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const gig = await response.json();
+                    document.getElementById('title').value = gig.title;
+                    document.getElementById('description').value = gig.description;
+                    document.getElementById('price').value = gig.price;
+                    document.getElementById('skills').value = gig.skills.join(', ');
+                } else {
+                    messageDiv.classList.remove('d-none');
+                    messageDiv.classList.add('alert-danger');
+                    messageDiv.textContent = 'Failed to fetch gig data.';
+                }
+            } catch (err) {
+                console.error(err);
+                messageDiv.classList.remove('d-none');
+                messageDiv.classList.add('alert-danger');
+                messageDiv.textContent = 'An error occurred while fetching gig data.';
+            }
+
+            // Handle form submission for updating the gig
+            document.getElementById('updateGigForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const updatedGig = {
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    price: document.getElementById('price').value,
+                    skills: document.getElementById('skills').value.split(',').map(s => s.trim())
+                };
+
+                try {
+                    const response = await fetch(`/api/gigs/${gigId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(updatedGig)
+                    });
+
+                    if (response.ok) {
+                        messageDiv.classList.remove('alert-danger');
+                        messageDiv.classList.add('alert-success');
+                        messageDiv.textContent = 'Gig updated successfully!';
+                    } else {
+                        const error = await response.json();
+                        messageDiv.classList.remove('alert-success');
+                        messageDiv.classList.add('alert-danger');
+                        messageDiv.textContent = error.msg || 'Failed to update gig.';
+                    }
+                } catch (err) {
+                    console.error(err);
+                    messageDiv.classList.remove('alert-success');
+                    messageDiv.classList.add('alert-danger');
+                    messageDiv.textContent = 'An error occurred while updating the gig.';
+                }
+            });
+
+            // Handle gig deletion
+            document.getElementById('deleteGigBtn').addEventListener('click', async () => {
+                if (confirm('Are you sure you want to delete this gig?')) {
+                    try {
+                        const response = await fetch(`/api/gigs/${gigId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+
+                        if (response.ok) {
+                            alert('Gig deleted successfully!');
+                            window.location.href = '/my-gigs'; // Redirect to my-gigs page after deletion
+                        } else {
+                            const error = await response.json();
+                            alert(error.msg || 'Failed to delete gig.');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('An error occurred while deleting the gig.');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

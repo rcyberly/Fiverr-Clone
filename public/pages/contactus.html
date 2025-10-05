@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for focus state and shadows */
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+            border-color: #4299e1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-3xl shadow-xl overflow-hidden max-w-lg w-full p-8">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Get in Touch</h1>
+            <p class="text-gray-500 mb-6">We'd love to hear from you!</p>
+        </div>
+
+        <form id="contact-form" class="space-y-6">
+            <div>
+                <label for="name" class="block text-gray-700 font-semibold mb-2">Your Name</label>
+                <input type="text" id="name" name="name" required
+                       class="form-input w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+            </div>
+
+            <div>
+                <label for="email" class="block text-gray-700 font-semibold mb-2">Email Address</label>
+                <input type="email" id="email" name="email" required
+                       class="form-input w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+            </div>
+
+            <div>
+                <label for="message" class="block text-gray-700 font-semibold mb-2">Message</label>
+                <textarea id="message" name="message" rows="5" required
+                          class="form-input w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"></textarea>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-md">
+                Send Message
+            </button>
+        </form>
+
+        <div id="response-message" class="mt-6 text-center text-sm font-semibold hidden"></div>
+
+    </div>
+
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const responseMessageDiv = document.getElementById('response-message');
+            responseMessageDiv.classList.add('hidden'); // Hide any previous messages
+
+            // Simple form validation
+            if (!form.name.value || !form.email.value || !form.message.value) {
+                responseMessageDiv.textContent = 'Please fill out all fields.';
+                responseMessageDiv.classList.remove('hidden');
+                responseMessageDiv.classList.add('text-red-500');
+                return;
+            }
+
+            // Simulate form submission
+            setTimeout(() => {
+                form.reset();
+                responseMessageDiv.textContent = 'Thank you! Your message has been sent.';
+                responseMessageDiv.classList.remove('hidden');
+                responseMessageDiv.classList.remove('text-red-500');
+                responseMessageDiv.classList.add('text-green-600');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

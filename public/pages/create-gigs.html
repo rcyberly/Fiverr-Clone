@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelance Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="#" class="text-2xl font-bold text-gray-800">Freelance Connect</a>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="#" onclick="toggleView('gig-list')" class="text-gray-600 hover:text-gray-900 font-medium">Home</a>
+                <a href="#" onclick="toggleView('post-gig-form')" class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-full font-medium transition-colors duration-300 shadow-md">Post a Gig</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900 font-medium hidden sm:block">My Gigs</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900 font-medium hidden sm:block">Profile</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+
+        <!-- Gig List View -->
+        <div id="gig-list" class="view active">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Featured Gigs</h1>
+
+                <div id="gigs-container" class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Gig cards will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Post a Gig Form View -->
+        <div id="post-gig-form" class="view">
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Post a New Gig</h2>
+                <form id="gig-form" class="space-y-6">
+                    <div>
+                        <label for="gig-title" class="block text-sm font-medium text-gray-700 mb-1">Gig Title</label>
+                        <input type="text" id="gig-title" name="gig-title" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="gig-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea id="gig-description" name="gig-description" rows="4" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="gig-price" class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                            <input type="number" id="gig-price" name="gig-price" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="gig-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                            <select id="gig-category" name="gig-category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="Web Development">Web Development</option>
+                                <option value="Graphic Design">Graphic Design</option>
+                                <option value="Content Writing">Content Writing</option>
+                                <option value="Digital Marketing">Digital Marketing</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" onclick="toggleView('gig-list')" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100 font-medium transition-colors duration-300">Cancel</button>
+                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 font-medium transition-colors duration-300">Post Gig</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2023 Freelance Connect. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // In-memory data for gigs
+        let gigs = [
+            {
+                title: "Build a modern React website",
+                description: "I will create a fast, responsive, and modern website using the latest React framework and Tailwind CSS.",
+                price: 500,
+                category: "Web Development",
+                imageUrl: "https://placehold.co/400x250/E0E7FF/4F46E5?text=Web+Dev"
+            },
+            {
+                title: "Professional logo design",
+                description: "I will design a unique and professional logo for your brand that stands out from the crowd.",
+                price: 250,
+                category: "Graphic Design",
+                imageUrl: "https://placehold.co/400x250/D1FAE5/065F46?text=Logo+Design"
+            },
+            {
+                title: "SEO-friendly blog article writing",
+                description: "I will write high-quality, SEO-optimized blog articles to boost your website's traffic and engagement.",
+                price: 150,
+                category: "Content Writing",
+                imageUrl: "https://placehold.co/400x250/FEF3C7/92400E?text=Content+Writing"
+            },
+            {
+                title: "Run a complete digital marketing campaign",
+                description: "I will plan, execute, and analyze a full digital marketing campaign across social media and search engines.",
+                price: 800,
+                category: "Digital Marketing",
+                imageUrl: "https://placehold.co/400x250/FEE2E2/B91C1C?text=Digital+Marketing"
+            },
+            {
+                title: "Custom Shopify store development",
+                description: "I will build a custom e-commerce store on Shopify with all the features you need to sell online.",
+                price: 750,
+                category: "Web Development",
+                imageUrl: "https://placehold.co/400x250/D1FAE5/065F46?text=Shopify+Dev"
+            },
+            {
+                title: "Social media content creation",
+                description: "I will create engaging and visually appealing content for your social media channels to grow your following.",
+                price: 300,
+                category: "Digital Marketing",
+                imageUrl: "https://placehold.co/400x250/FEF3C7/92400E?text=Social+Media"
+            }
+        ];
+
+        const gigsContainer = document.getElementById('gigs-container');
+        const gigForm = document.getElementById('gig-form');
+
+        // Function to render all gigs to the UI
+        function renderGigs() {
+            gigsContainer.innerHTML = ''; // Clear the container
+            gigs.forEach(gig => {
+                const gigCard = document.createElement('div');
+                gigCard.className = 'bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-xl';
+                gigCard.innerHTML = `
+                    <img src="${gig.imageUrl}" alt="${gig.title}" class="w-full h-40 object-cover">
+                    <div class="p-6">
+                        <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full mb-2">${gig.category}</span>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">${gig.title}</h3>
+                        <p class="text-gray-600 text-sm mb-4">${gig.description.substring(0, 80)}...</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-2xl font-bold text-gray-900">$${gig.price}</span>
+                            <a href="#" class="px-4 py-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-colors duration-300 font-medium text-sm">View Gig</a>
+                        </div>
+                    </div>
+                `;
+                gigsContainer.appendChild(gigCard);
+            });
+        }
+
+        // Function to toggle between different views (Gig list vs. Post Gig form)
+        function toggleView(viewId) {
+            const views = document.querySelectorAll('.view');
+            views.forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        // Function to handle the form submission
+        gigForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get form values
+            const title = document.getElementById('gig-title').value;
+            const description = document.getElementById('gig-description').value;
+            const price = document.getElementById('gig-price').value;
+            const category = document.getElementById('gig-category').value;
+            const imageUrl = `https://placehold.co/400x250/FDE68A/B45309?text=${encodeURIComponent(category)}`;
+
+            // Create a new gig object
+            const newGig = {
+                title,
+                description,
+                price: parseInt(price),
+                category,
+                imageUrl
+            };
+
+            // Add the new gig to the beginning of the array
+            gigs.unshift(newGig);
+
+            // Re-render the gigs list
+            renderGigs();
+
+            // Clear the form fields
+            gigForm.reset();
+
+            // Switch back to the gig list view
+            toggleView('gig-list');
+        });
+
+        // Initial render of gigs when the page loads
+        document.addEventListener('DOMContentLoaded', renderGigs);
+    </script>
+</body>
+</html>
